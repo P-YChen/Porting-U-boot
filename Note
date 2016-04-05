@@ -1,0 +1,9 @@
+时钟:
+M=0x7e
+P=2
+S=1
+Fout=(2*(0x7f+8)*12M)/((p+2)*2^s))=405M
+FCLK:HCLK:PCLK=1:4:8
+FCLK=405M
+HCLK=1620M
+PCLK=3240M
