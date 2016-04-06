@@ -71,7 +71,7 @@ extern void dataflash_print_info(void);
 #endif
 
 #ifndef CONFIG_IDENT_STRING
-#define CONFIG_IDENT_STRING ""
+#define CONFIG_IDENT_STRING "DIY FOR FUN"
 #endif
 
 const char version_string[] =

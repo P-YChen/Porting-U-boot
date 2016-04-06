@@ -75,7 +75,7 @@ TODO: external MII is not functional, only internal at the moment.
 #define DM9000_DMP_PACKET(func,packet,length)  \
 	do { \
 		int i; 							\
-		printf(func ": length: %d\n", length);			\
+		printf("%s : length: %d\n", func, length);			\
 		for (i = 0; i < length; i++) {				\
 			if (i % 8 == 0)					\
 				printf("\n%s: %02x: ", func, i);	\
@@ -561,6 +561,8 @@ static void dm9000_get_enetaddr(struct eth_device *dev)
 	char *s, *e;
 	s= getenv ("ethaddr");
 	for (i = 0; i < 6; i++) {
+		// get MAC address, and change it from string to unsigned long
+		// TODO: think about a better way.
 		dev->enetaddr[i] = s ? simple_strtoul(s, &e, 16) : 0;
 		if (s)
 			s = (*e) ? e + 1 : e;
@@ -638,7 +640,7 @@ int dm9000_initialize(bd_t *bis)
 	dev->halt = dm9000_halt;
 	dev->send = dm9000_send;
 	dev->recv = dm9000_rx;
-	sprintf(dev->name, "dm9000");
+	sprintf(dev->name, "DM9000-CEP");
 
 	eth_register(dev);
 

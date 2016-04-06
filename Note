@@ -7,3 +7,21 @@ FCLK:HCLK:PCLK=1:4:8
 FCLK=405M
 HCLK=1620M
 PCLK=3240M
+
+网卡出卡初始化流程：
+1: lib_arm/board.c
+func: start_armboot ()
+	eth_initialize ();
+
+2: net/eth.c
+func: eth_initialize ()
+	board_eth_init ();
+	cpu_eth_init ();
+
+3: board/samsung/DIY2440/DIY2440.c
+func: board_eth_init ()
+	dm9000_initialize ();
+
+4: drivers/net/dm9000x.c
+func: dm9000_initialize ()
+	finish struct eth_device var.

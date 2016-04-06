@@ -63,6 +63,7 @@
 /*
  * Hardware drivers
  */
+#define CONFIG_CMD_NET 1
 #define CONFIG_NET_MULTI
 #define CONFIG_NET_RETRY_COUNT	20
 #define CONFIG_DRIVER_DM9000	1
@@ -71,26 +72,6 @@
 #define DM9000_DATA	(CONFIG_DM9000_BASE + 4)
 #define CONFIG_DM9000_USE_16BIT	1
 #define CONFIG_DM9000_NO_SROM	1
-
-/* input clock of PLL */
-//#define CONFIG_SYS_CLK_FREQ	12000000/* the SMDK2410 has 12MHz input clock */
-
-
-//#define USE_920T_MMU		1
-//#undef CONFIG_USE_IRQ			/* we don't need IRQ/FIQ stuff */
-
-/*
- * Size of malloc() pool
- */
-//#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 128*1024)
-//#define CONFIG_SYS_GBL_DATA_SIZE	128	/* size in bytes reserved for initial data */
-
-/*
- * Hardware drivers
- */
-//#define CONFIG_NET_MULTI
-//#define CONFIG_CS8900		/* we have a CS8900 on-board */
-//#define CONFIG_CS8900_BASE	0x19000300
 
 /*
  * select serial console configuration
@@ -136,6 +117,7 @@
 #define CONFIG_IPADDR		192.168.1.110
 #define CONFIG_SERVERIP		192.168.1.1
 #define CONFIG_GATEWAYIP	192.168.1.1
+#define CONFIG_DM9000_DEBUG 1
 /*#define CONFIG_BOOTFILE	"elinos-lart" */
 /*#define CONFIG_BOOTCOMMAND	"tftp; bootm" */
 
