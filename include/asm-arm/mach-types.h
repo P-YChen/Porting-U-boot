@@ -1986,6 +1986,7 @@ extern unsigned int __machine_arch_type;
 #define MACH_TYPE_Q2440                1997
 #define MACH_TYPE_QQ2440               1998
 #define MACH_TYPE_MINI2440             1999
+#define MACH_TYPE_DIY2440	MACH_TYPE_MINI2440
 #define MACH_TYPE_COLIBRI300           2000
 #define MACH_TYPE_JADES                2001
 #define MACH_TYPE_SPARK                2002

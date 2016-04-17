@@ -40,6 +40,9 @@ SECTIONS
 	.text :
 	{
 		cpu/arm920t/start.o	(.text)
+		board/samsung/DIY2440/lowlevel_init.o	(.text)
+		board/samsung/DIY2440/nand_cp.o	(.text)
+		board/samsung/DIY2440/DIY2440.o	(.text)
 		lib_arm/debug.o (.text)
 		*(.text)
 	}

@@ -177,6 +177,16 @@ relocate:				/* relocate U-Boot to RAM	    */
 	cmp	r0, r1			/* don't reloc during debug         */
 	beq	stack_setup
 
+	mov r2, #0
+	str r2, [r2]
+	ldr r2, [r2]
+	cmp r2, #0
+	bne copy_to_ram_from_nor
+	mov sp, #0x1000
+	bl copy_to_ram_from_nand
+	b  stack_setup
+copy_to_ram_from_nor:
+
 	ldr	r2, _armboot_start
 	ldr	r3, _bss_start
 	sub	r2, r3, r2		/* r2 <- size of armboot            */

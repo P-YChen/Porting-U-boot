@@ -1,0 +1,74 @@
+struct mtd_info -> nand_info
+{
+	u_char type;	     /* MTD类型，包括MTD_NORFLASH,MTD_NANDFLASH等(可参考mtd-abi.h) */
+	uint32_t flags;	     /* MTD属性标志，MTD_WRITEABLE,MTD_NO_ERASE等(可参考mtd-abi.h) */
+	uint64_t size;	     /* mtd设备的大小 */
+	uint32_t erasesize;	 /* MTD设备的擦除单元大小，对于NandFlash来说就是Block的大小 */
+	uint32_t writesize;	 /* 写大小, 对于norFlash是字节,对nandFlash为一页 */
+	uint32_t oobsize;    /* OOB字节数 */
+	uint32_t oobavail;   /* 可用的OOB字节数 */
+	
+	const char *name;				/* 名字，   不重要*/
+	int index;						/* 索引号，不重要 */
+	struct nand_ecclayout *ecclayout;	/* ecc 分布指针,只读 */
+	int numeraseregions;			/* 通常为1 */
+	struct mtd_erase_region_info *eraseregions;	/* 可变擦除区域 */
+	
+	
+	
+	/* 擦除函数 */
+	int (*erase) (struct mtd_info *mtd, struct erase_info *instr);
+
+	int (*point) (struct mtd_info *mtd, loff_t from, size_t len,
+		size_t *retlen, void **virt, phys_addr_t *phys);
+ 
+	void (*unpoint) (struct mtd_info *mtd, loff_t from, size_t len);
+	/* 读写flash函数 */
+	int (*read) (struct mtd_info *mtd, loff_t from, size_t len, size_t *retlen, u_char *buf);
+	int (*write) (struct mtd_info *mtd, loff_t to, size_t len, size_t *retlen, const u_char *buf);
+
+	int (*panic_write) (struct mtd_info *mtd, loff_t to, size_t len, size_t *retlen, const u_char *buf);
+
+	/* 带oob读写Flash函数 */
+	int (*read_oob) (struct mtd_info *mtd, loff_t from,
+			 struct mtd_oob_ops *ops);
+	int (*write_oob) (struct mtd_info *mtd, loff_t to,
+			 struct mtd_oob_ops *ops);
+
+	int (*get_fact_prot_info) (struct mtd_info *mtd, struct otp_info *buf, size_t len);
+	int (*read_fact_prot_reg) (struct mtd_info *mtd, loff_t from, size_t len, size_t *retlen, u_char *buf);
+	int (*get_user_prot_info) (struct mtd_info *mtd, struct otp_info *buf, size_t len);
+	int (*read_user_prot_reg) (struct mtd_info *mtd, loff_t from, size_t len, size_t *retlen, u_char *buf);
+	int (*write_user_prot_reg) (struct mtd_info *mtd, loff_t from, size_t len, size_t *retlen, u_char *buf);
+	int (*lock_user_prot_reg) (struct mtd_info *mtd, loff_t from, size_t len);
+
+	int (*writev) (struct mtd_info *mtd, const struct kvec *vecs, unsigned long count, loff_t to, size_t *retlen);
+	
+	/* Sync */
+	void (*sync) (struct mtd_info *mtd);
+
+	/* Chip-supported device locking */
+	int (*lock) (struct mtd_info *mtd, loff_t ofs, uint64_t len);
+	int (*unlock) (struct mtd_info *mtd, loff_t ofs, uint64_t len);
+
+	/* 电源管理函数 */
+	int (*suspend) (struct mtd_info *mtd);
+	void (*resume) (struct mtd_info *mtd);
+
+	/* 坏块管理函数 */
+	int (*block_isbad) (struct mtd_info *mtd, loff_t ofs);
+	int (*block_markbad) (struct mtd_info *mtd, loff_t ofs);
+
+	/* ECC status information */
+	struct mtd_ecc_stats ecc_stats;
+
+	/*subpage shift */
+	int subpage_sft;
+
+	void *priv;		/* 设备私有数据指针，对于NandFlash来说指nand_chip结构体 */
+	struct module *owner;	/* 一般设置为THIS_MODULE */
+	int usecount;
+	
+	int (*get_device) (struct mtd_info *mtd);
+	void (*put_device) (struct mtd_info *mtd);
+};

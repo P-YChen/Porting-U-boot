@@ -2008,6 +2008,21 @@ static int nand_write(struct mtd_info *mtd, loff_t to, size_t len,
 {
 	struct nand_chip *chip = mtd->priv;
 	int ret;
+	int opsmode = 0;
+
+	if (mtd->rw_oob == 1) {
+		size_t oobsiz = mtd->oobsize;
+		size_t datsiz = mtd->writesize;
+		int i = 0;
+		int pages = len / datsiz;
+		uint8_t oob[oobsiz*pages];
+
+		for (i = 0; i < pages; i++) {
+			memcpy (oob+i*oobsiz, buf+(datsiz+oobsiz)*i + datsiz, oobsiz);
+			memcpy (buf+i*datsiz, buf+(datsiz+oobsiz)*i, datsiz);
+		}
+		memcpy (buf+pages*datsiz, oob, oobsiz*pages);
+	}
 
 	/* Do not allow reads past end of device */
 	if ((to + len) > mtd->size)
@@ -2019,13 +2034,23 @@ static int nand_write(struct mtd_info *mtd, loff_t to, size_t len,
 
 	chip->ops.len = len;
 	chip->ops.datbuf = (uint8_t *)buf;
-	chip->ops.oobbuf = NULL;
+	//chip->ops.oobbuf = NULL;
 
+	if (mtd->rw_oob == 1) {
+		chip->ops.oobbuf = (uint8_t*)(buf + len);
+		chip->ops.ooblen = mtd->oobsize;
+		opsmode = chip->ops.mode;
+		chip->ops.mode = MTD_OOB_RAW;
+	} else {
+		chip->ops.oobbuf = NULL;
+	}
+	
 	ret = nand_do_write_ops(mtd, to, &chip->ops);
 
 	*retlen = chip->ops.retlen;
 
 	nand_release_device(mtd);
+	chip->ops.mode = opsmode;
 
 	return ret;
 }

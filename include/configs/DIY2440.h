@@ -34,7 +34,7 @@
 
 /* ASM Debug Options */
 #define CONFIG_ASM_DEBUG 1
-#define DEBUG
+//#define DEBUG
 
 /*
  * High Level Configuration Options
@@ -63,7 +63,7 @@
 /*
  * Hardware drivers
  */
-#define CONFIG_CMD_NET 1
+//#define CONFIG_CMD_NET 1
 #define CONFIG_NET_MULTI
 #define CONFIG_NET_RETRY_COUNT	20
 #define CONFIG_DRIVER_DM9000	1
@@ -108,16 +108,28 @@
 #define CONFIG_CMD_DATE
 #define CONFIG_CMD_ELF
 #define CONFIG_CMD_PING
+#define CONFIG_CMD_NAND
+#define CONFIG_CMD_YAFFS
+#define CONFIG_YAFFS_SKIPFB
+
+/* tag list */
+#define CONFIG_SETUP_MEMORY_TAGS
+#define CONFIG_INITRD_TAG
+#define CONFIG_CMDLINE_TAG
 
 #define CONFIG_BOOTDELAY	3
 /*#define CONFIG_BOOTARGS	"root=ramfs devfs=mount console=ttySA0,9600" */
 /*#define CONFIG_ETHADDR	08:00:3e:26:0a:5b */
+#define CONFIG_BOOTARGS	"root=/dev/nfs nfsroot=192.168.199.154:/home/shift/work/nfs/rootfs \ 
+ip=192.168.199.110 console=ttySA0,115200"
 #define CONFIG_ETHADDR	08:90:00:A0:90:90 
 #define CONFIG_NETMASK          255.255.255.0
-#define CONFIG_IPADDR		192.168.1.110
-#define CONFIG_SERVERIP		192.168.1.1
-#define CONFIG_GATEWAYIP	192.168.1.1
-#define CONFIG_DM9000_DEBUG 1
+#define CONFIG_IPADDR		192.168.199.110
+#define CONFIG_SERVERIP		192.168.199.154
+#define CONFIG_GATEWAYIP	192.168.199.1
+//#define CONFIG_DM9000_DEBUG 1
+#define CONFIG_BOOTFILE	"uImage"
+#define CONFIG_BOOTCOMMAND	"tftp; bootm"
 /*#define CONFIG_BOOTFILE	"elinos-lart" */
 /*#define CONFIG_BOOTCOMMAND	"tftp; bootm" */
 
@@ -143,7 +155,7 @@
 #define CONFIG_SYS_MEMTEST_START	0x30000000	/* memtest works on	*/
 #define CONFIG_SYS_MEMTEST_END		0x33F00000	/* 63 MB in DRAM	*/
 
-#define	CONFIG_SYS_LOAD_ADDR		0x33000000	/* default load address	*/
+#define	CONFIG_SYS_LOAD_ADDR		0x30008000	/* default load address	*/
 
 #define	CONFIG_SYS_HZ			1000
 
@@ -207,7 +219,19 @@
 #define CONFIG_SYS_FLASH_ERASE_TOUT	(5*CONFIG_SYS_HZ) /* Timeout for Flash Erase */
 #define CONFIG_SYS_FLASH_WRITE_TOUT	(5*CONFIG_SYS_HZ) /* Timeout for Flash Write */
 
-#define	CONFIG_ENV_IS_IN_FLASH	1
-#define CONFIG_ENV_SIZE		0x10000	/* Total Size of Environment Sector */
+//#define	CONFIG_ENV_IS_IN_FLASH	1
+//#define CONFIG_ENV_SIZE		0x10000	/* Total Size of Environment Sector */
+#define	CONFIG_ENV_IS_IN_NAND	1
+#define	CONFIG_ENV_OFFSET	0x80000
+#define CONFIG_ENV_SIZE	0x80000
+#if defined(CONFIG_CMD_NAND)
+#define CONFIG_NAND_S3C2440
+#define CONFIG_SYS_NAND_BASE	0x4E000000
+#define CONFIG_SYS_MAX_NAND_DEVICE	1
+#define CONFIG_SYS_64BIT_VSPRINTF
+//#define CONFIG_MTD_NAND_BERIFY_WRITE
+//#define CONFIG_NAND_HWECC
+#endif
+#define CONFIG_UBOOT_SIZE	0x80000
 
 #endif	/* __CONFIG_H */
