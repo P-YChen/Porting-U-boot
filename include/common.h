@@ -719,4 +719,9 @@ int cpu_release(int nr, int argc, char *argv[]);
 #define ALIGN(x,a)		__ALIGN_MASK((x),(typeof(x))(a)-1)
 #define __ALIGN_MASK(x,mask)	(((x)+(mask))&~(mask))
 
+#define CONFIG_MY_DEBUG
+#if defined(CONFIG_MY_DEBUG)
+#define my_debug(fmt, args...) printf("[%s,%d]:"fmt"\r\n",__FILE__, __LINE__, ##args);
+#endif
+
 #endif	/* __COMMON_H_ */

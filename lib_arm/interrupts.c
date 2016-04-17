@@ -46,6 +46,9 @@ int interrupt_init (void)
 	/*
 	 * setup up stacks if necessary
 	 */
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("%s", "interrutp_init");
+#endif
 	IRQ_STACK_START = _armboot_start - CONFIG_SYS_MALLOC_LEN - CONFIG_SYS_GBL_DATA_SIZE - 4;
 	FIQ_STACK_START = IRQ_STACK_START - CONFIG_STACKSIZE_IRQ;
 

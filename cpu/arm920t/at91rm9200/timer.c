@@ -47,6 +47,9 @@ static ulong lastinc;
 
 int timer_init (void)
 {
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("%s", "timer_init");
+#endif
 	tmr = AT91C_BASE_TC0;
 
 	/* enables TC1.0 clock */

@@ -82,6 +82,10 @@ int board_init (void)
 					s3c24x0_get_base_clock_power();
 	struct s3c24x0_gpio * const gpio = s3c24x0_get_base_gpio();
 
+#if defined(CONFIG_MY_DEBUG)
+	my_debug ("%s", "board_init");
+#endif
+
 	/* to reduce PLL lock time, adjust the LOCKTIME register */
 	clk_power->LOCKTIME = 0xFFFFFF;
 
@@ -128,6 +132,9 @@ int board_init (void)
 
 int dram_init (void)
 {
+#ifdef CONFIG_MY_DEBUG
+	my_debug("%s", "dram_init");
+#endif
 	gd->bd->bi_dram[0].start = PHYS_SDRAM_1;
 	gd->bd->bi_dram[0].size = PHYS_SDRAM_1_SIZE;
 

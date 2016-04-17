@@ -8,6 +8,14 @@
 #include <s3c2410.h>
 #include <asm/io.h>
 
+typedef struct __nand_message {
+	vu_char MakerID;
+	vu_char DeviceID;
+	vu_char ChipNumber;
+	vu_char PageSize;
+	vu_char PlaneSize;
+} nand_message;
+
 #define NF_CMD(nand, cmd)   writeb(cmd, &nand->NFCMD)            /* 写命令 */
 #define NF_ADDR(nand, addr) writeb(addr, &nand->NFADDR)          /* 写地址 */
 #define NF_RDDATA8(nand)    readb(&nand->NFDATA)              /* 读8位数据 */
@@ -85,7 +93,7 @@ int copy_to_ram_from_nand(void)
 {
 	int large_block = 0;
 	int i;
-	vu_char id;
+	nand_message chip;
 	struct s3c2410_nand *nand = s3c2410_get_base_nand();
 	
 	NF_ENABLE_CE(nand);
@@ -94,12 +102,15 @@ int copy_to_ram_from_nand(void)
 	
 	for (i = 0; i < 200; i++);  /* 短暂延时 */
 	
-	id = NF_RDDATA8(nand);  /* Maker Code */
-	id = NF_RDDATA8(nand);  /* Device Code */
-	
+	chip.MakerID = NF_RDDATA8(nand);  /* Maker Code */
+	chip.DeviceID = NF_RDDATA8(nand);  /* Device Code */
+	chip.ChipNumber = NF_RDDATA8(nand);  
+	chip.PageSize = NF_RDDATA8(nand);
+	chip.PlaneSize = NF_RDDATA8(nand);
+
     nandll_reset();
 
-	if (id > 0x80)
+	if ((chip.PageSize & (0x01)) > 0)
 		large_block = 1;
 
 	return nandll_read_blocks(TEXT_BASE, CONFIG_UBOOT_SIZE, large_block);

@@ -295,7 +295,7 @@ __LIBS := $(subst $(obj),,$(LIBS)) $(subst $(obj),,$(LIBBOARD))
 #########################################################################
 
 # Always append ALL so that arch config.mk's can add custom ones
-ALL += $(obj)u-boot.srec $(obj)u-boot.bin $(obj)System.map $(U_BOOT_NAND) $(U_BOOT_ONENAND)
+ALL += $(obj)u-boot.srec $(obj)u-boot.bin $(obj)System.map $(U_BOOT_NAND) $(U_BOOT_ONENAND) $(obj)u-boot.S
 
 all:		$(ALL)
 
@@ -334,6 +334,9 @@ $(obj)u-boot.sha1:	$(obj)u-boot.bin
 
 $(obj)u-boot.dis:	$(obj)u-boot
 		$(OBJDUMP) -d $< > $@
+
+$(obj)u-boot.S:	$(obj)u-boot
+		$(OBJDUMP) -S $< > $@
 
 GEN_UBOOT = \
 		UNDEF_SYM=`$(OBJDUMP) -x $(LIBBOARD) $(LIBS) | \

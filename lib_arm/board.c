@@ -126,6 +126,9 @@ static int init_baudrate (void)
 {
 	char tmp[64];	/* long enough for environment variables */
 	int i = getenv_r ("baudrate", tmp, sizeof (tmp));
+#if defined(CONFIG_MY_DEBUG)
+	my_debug ("%s", "init_baudrate");
+#endif
 	gd->bd->bi_baudrate = gd->baudrate = (i > 0)
 			? (int) simple_strtoul (tmp, NULL, 10)
 			: CONFIG_BAUDRATE;
@@ -135,6 +138,9 @@ static int init_baudrate (void)
 
 static int display_banner (void)
 {
+#if defined(CONFIG_MY_DEBUG)
+	my_debug ("%s", "display_banner");
+#endif
 	printf ("\n\n%s\n\n", version_string);
 	debug ("U-Boot code: %08lX -> %08lX  BSS: -> %08lX\n",
 	       _armboot_start, _bss_start, _bss_end);
@@ -159,7 +165,9 @@ static int display_banner (void)
 static int display_dram_config (void)
 {
 	int i;
-
+#if defined (CONFIG_MY_DEBUG)
+	my_debug("%s", "display_dram_config");
+#endif
 #ifdef DEBUG
 	puts ("RAM Configuration:\n");
 
@@ -191,6 +199,9 @@ static void display_flash_config (ulong size)
 #if defined(CONFIG_HARD_I2C) || defined(CONFIG_SOFT_I2C)
 static int init_func_i2c (void)
 {
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("%s", "init_func_i2c");
+#endif
 	puts ("I2C:   ");
 	i2c_init (CONFIG_SYS_I2C_SPEED, CONFIG_SYS_I2C_SLAVE);
 	puts ("ready\n");
@@ -202,6 +213,9 @@ static int init_func_i2c (void)
 #include <pci.h>
 static int arm_pci_init(void)
 {
+#ifdef CONFIG_MY_DEBUG
+	my_debug("%s", "arm_pci_init");
+#endif
 	pci_init();
 	return 0;
 }
@@ -275,6 +289,8 @@ void start_armboot (void)
 
 	/* Pointer is writable since we allocated a register for it */
 	gd = (gd_t*)(_armboot_start - CONFIG_SYS_MALLOC_LEN - sizeof(gd_t));
+
+
 	/* compiler optimization barrier needed for GCC >= 3.4 */
 	__asm__ __volatile__("": : :"memory");
 

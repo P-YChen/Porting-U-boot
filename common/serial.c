@@ -210,6 +210,9 @@ void serial_reinit_all (void)
 
 int serial_init (void)
 {
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("%s", "serial_init");
+#endif
 	if (!(gd->flags & GD_FLG_RELOC) || !serial_current) {
 		struct serial_device *dev = default_serial_console ();
 

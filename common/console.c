@@ -522,6 +522,9 @@ int console_assign(int file, char *devname)
 /* Called before relocation - use serial functions */
 int console_init_f(void)
 {
+#if defined(CONFIG_MY_DEBUG)
+my_debug ("%s", "console_init_f");
+#endif
 	gd->have_console = 1;
 
 #ifdef CONFIG_SILENT_CONSOLE
