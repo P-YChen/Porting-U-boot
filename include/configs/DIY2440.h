@@ -57,8 +57,9 @@
 /*
  * Size of malloc() pool
  */
-#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 128*1024)
-#define CONFIG_SYS_GBL_DATA_SIZE	128	/* size in bytes reserved for initial data */
+//#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 128*1024)
+#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 2*1024*1024)
+#define CONFIG_SYS_GBL_DATA_SIZE	512 /* size in bytes reserved for initial data */
 
 /*
  * Hardware drivers
@@ -112,12 +113,22 @@
 #define CONFIG_CMD_YAFFS
 #define CONFIG_YAFFS_SKIPFB
 
+#define CONFIG_CMD_MTDPARTS
+#define CONFIG_CMD_UBI
+#define CONFIG_CMD_UBIFS
+#define CONFIG_MTD_DEVICE
+#define CONFIG_MTD_PARTITIONS
+#define CONFIG_LZO
+#define CONFIG_RBTREE
+#define MTDIDS_DEFAULT "nand0=nandflash0"
+#define MTDPARTS_DEFAULT "mtdparts=nandflash0:512k(u-boot),512k(param),5m(kernel),-(file-system)"
+
 /* tag list */
 #define CONFIG_SETUP_MEMORY_TAGS
 #define CONFIG_INITRD_TAG
 #define CONFIG_CMDLINE_TAG
 
-#define CONFIG_BOOTDELAY	3
+#define CONFIG_BOOTDELAY	10
 /*#define CONFIG_BOOTARGS	"root=ramfs devfs=mount console=ttySA0,9600" */
 /*#define CONFIG_ETHADDR	08:00:3e:26:0a:5b */
 #define CONFIG_BOOTARGS	"root=/dev/nfs nfsroot=192.168.199.154:/home/shift/work/nfs/rootfs \ 
@@ -167,7 +178,7 @@ ip=192.168.199.110 console=ttySA0,115200"
  *
  * The stack sizes are set up in start.S using the settings below
  */
-#define CONFIG_STACKSIZE	(128*1024)	/* regular stack */
+#define CONFIG_STACKSIZE	(512*1024)	/* regular stack */
 #ifdef CONFIG_USE_IRQ
 #define CONFIG_STACKSIZE_IRQ	(4*1024)	/* IRQ stack */
 #define CONFIG_STACKSIZE_FIQ	(4*1024)	/* FIQ stack */

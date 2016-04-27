@@ -231,29 +231,50 @@ void env_relocate (void)
 
 #ifdef CONFIG_AMIGAONEG3SE
 	enable_nvram();
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("define CONFIG_AMIGAONEG3SE");
+#endif /*end of CONFIG_MY_DEBUG */
 #endif
 
 #ifdef ENV_IS_EMBEDDED
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("define ENV_IS_EMBEDDED");
+#endif /* end of CONFIG_MY_DEBUG */
 	/*
 	 * The environment buffer is embedded with the text segment,
 	 * just relocate the environment pointer
 	 */
 #ifndef CONFIG_RELOC_FIXUP_WORKS
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("define CONFIG_RELOC_FIXUP_WORKS");
+#endif /* end of CONFIG_MY_DEBUG */
 	env_ptr = (env_t *)((ulong)env_ptr + gd->reloc_off);
 #endif
 	DEBUGF ("%s[%d] embedded ENV at %p\n", __FUNCTION__,__LINE__,env_ptr);
 #else
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("undefine ENV_IS_EMBEDDED");
+#endif /* END OF CONFIG_MY_DEBUG */
 	/*
 	 * We must allocate a buffer for the environment
 	 */
 	env_ptr = (env_t *)malloc (CONFIG_ENV_SIZE);
 	DEBUGF ("%s[%d] malloced ENV at %p\n", __FUNCTION__,__LINE__,env_ptr);
+	my_debug ("malloced ENV at %p\n", env_ptr);
 #endif
 
 	if (gd->env_valid == 0) {
 #if defined(CONFIG_GTH)	|| defined(CONFIG_ENV_IS_NOWHERE)	/* Environment not changable */
+#ifdef CONFIG_MY_DEBUG
+#ifdef CONFIG_GTH
+		my_debug ("define CONFIG_GTH");
+#elif CONFIG_ENV_IS_NOWHERE
+		my_debug ("define CONFIG_ENV_IS_NOWHERE");
+#endif
+#endif /* end of CONFIG_MY_DEBUG */
 		puts ("Using default environment\n\n");
 #else
+		my_debug ("undef CONFIG_GTH && CONFIG_ENV_IS_NOWHERE");
 		puts ("*** Warning - bad CRC, using default environment\n\n");
 		show_boot_progress (-60);
 #endif
@@ -265,6 +286,9 @@ void env_relocate (void)
 	gd->env_addr = (ulong)&(env_ptr->data);
 
 #ifdef CONFIG_AMIGAONEG3SE
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("define CONFIG_AMIGAONEG3SE");
+#endif /* end of CONFIG_MY_DEBUG */
 	disable_nvram();
 #endif
 }

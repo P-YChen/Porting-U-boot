@@ -126,9 +126,6 @@ static int init_baudrate (void)
 {
 	char tmp[64];	/* long enough for environment variables */
 	int i = getenv_r ("baudrate", tmp, sizeof (tmp));
-#if defined(CONFIG_MY_DEBUG)
-	my_debug ("%s", "init_baudrate");
-#endif
 	gd->bd->bi_baudrate = gd->baudrate = (i > 0)
 			? (int) simple_strtoul (tmp, NULL, 10)
 			: CONFIG_BAUDRATE;
@@ -138,9 +135,6 @@ static int init_baudrate (void)
 
 static int display_banner (void)
 {
-#if defined(CONFIG_MY_DEBUG)
-	my_debug ("%s", "display_banner");
-#endif
 	printf ("\n\n%s\n\n", version_string);
 	debug ("U-Boot code: %08lX -> %08lX  BSS: -> %08lX\n",
 	       _armboot_start, _bss_start, _bss_end);
@@ -165,9 +159,6 @@ static int display_banner (void)
 static int display_dram_config (void)
 {
 	int i;
-#if defined (CONFIG_MY_DEBUG)
-	my_debug("%s", "display_dram_config");
-#endif
 #ifdef DEBUG
 	puts ("RAM Configuration:\n");
 
@@ -199,9 +190,6 @@ static void display_flash_config (ulong size)
 #if defined(CONFIG_HARD_I2C) || defined(CONFIG_SOFT_I2C)
 static int init_func_i2c (void)
 {
-#ifdef CONFIG_MY_DEBUG
-	my_debug ("%s", "init_func_i2c");
-#endif
 	puts ("I2C:   ");
 	i2c_init (CONFIG_SYS_I2C_SPEED, CONFIG_SYS_I2C_SLAVE);
 	puts ("ready\n");
@@ -213,9 +201,6 @@ static int init_func_i2c (void)
 #include <pci.h>
 static int arm_pci_init(void)
 {
-#ifdef CONFIG_MY_DEBUG
-	my_debug("%s", "arm_pci_init");
-#endif
 	pci_init();
 	return 0;
 }
@@ -248,20 +233,57 @@ typedef int (init_fnc_t) (void);
 
 int print_cpuinfo (void);
 
+#ifdef CONFIG_MY_DEBUG
+typedef struct __init_msg {
+	init_fnc_t *init_fun;
+	char fun_name[20];
+} _init_msg;
+
+_init_msg init_msg[] = {
+#if defined(CONFIG_ARCH_CPU_INIT)
+	{arch_cpu_init,"arch_cpu_init"},		/* basic arch cpu dependent setup */
+#endif
+	{board_init,"board_init"},		/* basic board dependent setup */
+#if defined(CONFIG_USE_IRQ)
+	{interrupt_init,"interrupt_init"},		/* set up exceptions */
+#endif
+	{timer_init,"timer_init"},		/* initialize timer */
+	{env_init,"env_init"},		/* initialize environment */
+	{init_baudrate,"init_baudrate"},		/* initialze baudrate settings */
+	{serial_init,"serial_init"},		/* serial communications setup */
+	{console_init_f,"console_init_f"},		/* stage 1 init of console */
+	{display_banner,"display_banner"},		/* say that we are here */
+#if defined(CONFIG_DISPLAY_CPUINFO)
+	{print_cpuinfo,"print_cpuinfo"},		/* display cpu info (and speed) */
+#endif
+#if defined(CONFIG_DISPLAY_BOARDINFO)
+	{checkboard,"checkboard"},		/* display board info */
+#endif
+#if defined(CONFIG_HARD_I2C) || defined(CONFIG_SOFT_I2C)
+	{init_func_i2c,"init_func_i2c"},
+#endif
+	{dram_init,"dram_init"},		/* configure available RAM banks */
+#if defined(CONFIG_CMD_PCI) || defined (CONFIG_PCI)
+	{arm_pci_init,"arm_pci_init"},
+#endif
+	{display_dram_config,"display_dram_config"},
+	{NULL,NULL}
+};
+#endif
 init_fnc_t *init_sequence[] = {
 #if defined(CONFIG_ARCH_CPU_INIT)
 	arch_cpu_init,		/* basic arch cpu dependent setup */
 #endif
-	board_init,		/* basic board dependent setup */
+	board_init,		/** basic board dependent setup */
 #if defined(CONFIG_USE_IRQ)
 	interrupt_init,		/* set up exceptions */
 #endif
-	timer_init,		/* initialize timer */
-	env_init,		/* initialize environment */
-	init_baudrate,		/* initialze baudrate settings */
-	serial_init,		/* serial communications setup */
-	console_init_f,		/* stage 1 init of console */
-	display_banner,		/* say that we are here */
+	timer_init,		/** initialize timer */
+	env_init,		/** initialize environment */
+	init_baudrate,		/** initialze baudrate settings */
+	serial_init,		/** serial communications setup */
+	console_init_f,		/** stage 1 init of console */
+	display_banner,		/** say that we are here */
 #if defined(CONFIG_DISPLAY_CPUINFO)
 	print_cpuinfo,		/* display cpu info (and speed) */
 #endif
@@ -271,11 +293,11 @@ init_fnc_t *init_sequence[] = {
 #if defined(CONFIG_HARD_I2C) || defined(CONFIG_SOFT_I2C)
 	init_func_i2c,
 #endif
-	dram_init,		/* configure available RAM banks */
+	dram_init,		/** configure available RAM banks */
 #if defined(CONFIG_CMD_PCI) || defined (CONFIG_PCI)
 	arm_pci_init,
 #endif
-	display_dram_config,
+	display_dram_config, /**/
 	NULL,
 };
 
@@ -289,7 +311,6 @@ void start_armboot (void)
 
 	/* Pointer is writable since we allocated a register for it */
 	gd = (gd_t*)(_armboot_start - CONFIG_SYS_MALLOC_LEN - sizeof(gd_t));
-
 
 	/* compiler optimization barrier needed for GCC >= 3.4 */
 	__asm__ __volatile__("": : :"memory");
@@ -308,7 +329,26 @@ void start_armboot (void)
 		}
 	}
 
+#ifdef CONFIG_MY_DEBUG
+	_init_msg *pt;
+	printf ("gd=0x%lx\r\n", (_armboot_start - CONFIG_SYS_MALLOC_LEN - sizeof(gd_t)));
+	printf ("bd=0x%lx\r\n", (_armboot_start - CONFIG_SYS_MALLOC_LEN - sizeof(gd_t)) - sizeof(bd_t));
+	printf ("monitor_flash_len = 0x%lx\r\n", _bss_start - _armboot_start);
+	printf ("Init_sequence:\r\n");		
+	for (init_fnc_ptr = init_sequence; *init_fnc_ptr; ++init_fnc_ptr) {
+		for (pt = init_msg; pt->init_fun; pt++) {
+			if (*init_fnc_ptr == pt->init_fun) {
+				my_debug("0x%lx %s", init_fnc_ptr, pt->fun_name);
+				break;
+			}
+		}
+	}
+#endif
+
 	/* armboot_start is defined in the board-specific linker script */
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("%s", "start run [mem_malloc_init]");
+#endif
 	mem_malloc_init (_armboot_start - CONFIG_SYS_MALLOC_LEN,
 			CONFIG_SYS_MALLOC_LEN);
 
@@ -324,6 +364,9 @@ void start_armboot (void)
 	/*
 	 * reserve memory for VFD display (always full pages)
 	 */
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("%s", "define CONFIG_VFD");
+#endif
 	/* bss_end is defined in the board-specific linker script */
 	addr = (_bss_end + (PAGE_SIZE - 1)) & ~(PAGE_SIZE - 1);
 	vfd_setmem (addr);
@@ -331,6 +374,9 @@ void start_armboot (void)
 #endif /* CONFIG_VFD */
 
 #ifdef CONFIG_LCD
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("%s", "define CONFIG_LCD");
+#endif
 	/* board init may have inited fb_base */
 	if (!gd->fb_base) {
 #		ifndef PAGE_SIZE
@@ -347,15 +393,24 @@ void start_armboot (void)
 #endif /* CONFIG_LCD */
 
 #if defined(CONFIG_CMD_NAND)
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("%s", "define CONFIG_CMD_NAND");
+#endif
 	puts ("NAND:  ");
 	nand_init();		/* go init the NAND */
 #endif
 
 #if defined(CONFIG_CMD_ONENAND)
+#ifdef CONFIG_MY_CONFIG
+	my_debug ("%s", "define CONFIG_CMD_ONENAND");
+#endif
 	onenand_init();
 #endif
 
 #ifdef CONFIG_HAS_DATAFLASH
+#ifdef CONFIG_MY_CONFIG
+	my_debug ("%s", "define CONFIG_HAS_DATAFLASH");
+#endif
 	AT91F_DataflashInit();
 	dataflash_print_info();
 #endif
@@ -369,6 +424,9 @@ void start_armboot (void)
 #endif /* CONFIG_VFD */
 
 #ifdef CONFIG_SERIAL_MULTI
+#ifdef CONFIG_MY_CONFIG
+	my_debug ("%s", "define CONFIG_SERIAL_MULTI");
+#endif
 	serial_initialize();
 #endif
 
@@ -380,6 +438,9 @@ void start_armboot (void)
 	jumptable_init ();
 
 #if defined(CONFIG_API)
+#ifdef CONFIG_MY_CONFIG
+	my_debug ("%s", "define CONFIG_API");
+#endif
 	/* Initialize API */
 	api_init ();
 #endif
@@ -387,10 +448,16 @@ void start_armboot (void)
 	console_init_r ();	/* fully init console as a device */
 
 #if defined(CONFIG_ARCH_MISC_INIT)
+#ifdef CONFIG_MY_CONFIG
+	my_debug ("%s", "define CONFIG_ARCH_MISC_INIT");
+#endif
 	/* miscellaneous arch dependent initialisations */
 	arch_misc_init ();
 #endif
 #if defined(CONFIG_MISC_INIT_R)
+#ifdef CONFIG_MY_CONFIG
+	my_debug ("%s", "define CONFIG_MISC_INIT_R");
+#endif
 	/* miscellaneous platform dependent initialisations */
 	misc_init_r ();
 #endif
@@ -400,6 +467,9 @@ void start_armboot (void)
 
 	/* Perform network card initialisation if necessary */
 #ifdef CONFIG_DRIVER_TI_EMAC
+#ifdef CONFIG_MY_CONFIG
+	my_debug ("%s", "define CONFIG_DRIVER_TI_EMAC");
+#endif
 	/* XXX: this needs to be moved to board init */
 extern void davinci_eth_set_mac_addr (const u_int8_t *addr);
 	if (getenv ("ethaddr")) {
@@ -423,21 +493,33 @@ extern void davinci_eth_set_mac_addr (const u_int8_t *addr);
 		load_addr = simple_strtoul (s, NULL, 16);
 	}
 #if defined(CONFIG_CMD_NET)
+#ifdef CONFIG_MY_CONFIG
+	my_debug ("%s", "define CONFIG_CMD_NET");
+#endif
 	if ((s = getenv ("bootfile")) != NULL) {
 		copy_filename (BootFile, s, sizeof (BootFile));
 	}
 #endif
 
 #ifdef BOARD_LATE_INIT
+#ifdef CONFIG_MY_CONFIG
+	my_debug ("%s", "define CONFIG_LATE_INIT");
+#endif
 	board_late_init ();
 #endif
 
 #ifdef CONFIG_GENERIC_MMC
+#ifdef CONFIG_MY_CONFIG
+	my_debug ("%s", "define CONFIG_GENERIC_MMC");
+#endif
 	puts ("MMC:   ");
 	mmc_initialize (gd->bd);
 #endif
 
 #ifdef CONFIG_BITBANGMII
+#ifdef CONFIG_MY_CONFIG
+	my_debug ("%s", "define CONFIG_BITBANGMII");
+#endif
 	bb_miiphy_init();
 #endif
 #if defined(CONFIG_CMD_NET)

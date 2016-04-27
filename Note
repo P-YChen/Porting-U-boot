@@ -4,9 +4,9 @@ P=2
 S=1
 Fout=(2*(0x7f+8)*12M)/((p+2)*2^s))=405M
 FCLK:HCLK:PCLK=1:4:8
-FCLK=405M
-HCLK=1620M
-PCLK=3240M
+FCLK=405000000
+HCLK=101250000
+PCLK=50625000
 
 网卡出卡初始化流程：
 1: lib_arm/board.c

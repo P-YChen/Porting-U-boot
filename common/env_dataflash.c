@@ -69,9 +69,6 @@ int env_init(void)
 	ulong crc, len, new;
 	unsigned off;
 	uchar buf[64];
-#ifdef CONFIG_MY_DEBUG
-	my_debug ("%s", "env_init");
-#endif
 	if (gd->env_valid == 0){
 		AT91F_DataflashInit();	/* prepare for DATAFLASH read/write */
 

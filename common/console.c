@@ -522,9 +522,6 @@ int console_assign(int file, char *devname)
 /* Called before relocation - use serial functions */
 int console_init_f(void)
 {
-#if defined(CONFIG_MY_DEBUG)
-my_debug ("%s", "console_init_f");
-#endif
 	gd->have_console = 1;
 
 #ifdef CONFIG_SILENT_CONSOLE
@@ -574,7 +571,9 @@ int console_init_r(void)
 #ifdef CONFIG_CONSOLE_MUX
 	int iomux_err = 0;
 #endif
-
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("%s", "define CONFIG_SYS_CONSOLE_ENV_OVERWRITE");
+#endif
 	/* set default handlers at first */
 	gd->jt[XF_getc] = serial_getc;
 	gd->jt[XF_tstc] = serial_tstc;
@@ -659,6 +658,9 @@ int console_init_r(void)
 	struct list_head *pos;
 	struct stdio_dev *dev;
 
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("%s", "undef CONFIG_SYS_CONSOLE_ENV_OVERWRITE");
+#endif
 #ifdef CONFIG_SPLASH_SCREEN
 	/*
 	 * suppress all output if splash screen is enabled and we have

@@ -635,6 +635,12 @@ int vsprintf(char *buf, const char *fmt, va_list args)
 		if (qualifier == 'L')  /* "quad" for 64 bit variables */
 			num = va_arg(args, unsigned long long);
 		else
+//		if (qualifier == 'L') {
+//			if ((unsigned int)args % 8 == 0)
+//				args = (unsigned int)args + 4;
+//			memcpy (&num, (char*)args, 8);
+//			args = (unsigned int)args + 8;
+//		}else
 #endif
 		if (qualifier == 'l') {
 			num = va_arg(args, unsigned long);

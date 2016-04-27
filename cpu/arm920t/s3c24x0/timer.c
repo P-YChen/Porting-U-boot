@@ -85,6 +85,14 @@ int timer_init(void)
 	writel(tmr, &timers->TCON);
 	timestamp = 0;
 
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("FCLK=%ld", get_FCLK());
+	my_debug ("HCLK=%ld", get_HCLK());
+	my_debug ("PCLK=%ld", get_PCLK());
+	my_debug ("timer_load_val=%ld", timer_load_val);
+	my_debug ("timer_clk=%ld", timer_clk);
+#endif
+
 	return (0);
 }
 
