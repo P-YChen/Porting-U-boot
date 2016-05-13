@@ -2569,6 +2569,11 @@ static struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 
 	tmp_manf = chip->read_byte(mtd);
 	tmp_id = chip->read_byte(mtd);
+	
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("tmp_manf=%d\n", tmp_manf);
+	my_debug ("tmp_id=%d\n", tmp_id);
+#endif
 
 	if (tmp_manf != *maf_id || tmp_id != dev_id) {
 		printk(KERN_INFO "%s: second ID read did not match "
@@ -2581,6 +2586,9 @@ static struct nand_flash_dev *nand_get_flash_type(struct mtd_info *mtd,
 	for (i = 0; nand_flash_ids[i].name != NULL; i++) {
 		if (dev_id == nand_flash_ids[i].id) {
 			type =  &nand_flash_ids[i];
+#ifdef CONFIG_MY_DEBUG
+			my_debug ("type = 0x%lx\n", type);
+#endif
 			break;
 		}
 	}

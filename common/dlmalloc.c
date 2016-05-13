@@ -2185,6 +2185,9 @@ Void_t* mALLOc(bytes) size_t bytes;
 
   INTERNAL_SIZE_T nb;
 
+#ifdef CONFIG_MY_DEBUG
+  my_debug ("malloc bytes=0x%lx", bytes);
+#endif
   if ((long)bytes < 0) return 0;
 
   nb = request2size(bytes);  /* padded request size; */
@@ -2461,6 +2464,10 @@ void fREe(mem) Void_t* mem;
   sz = hd & ~PREV_INUSE;
   next = chunk_at_offset(p, sz);
   nextsz = chunksize(next);
+
+#ifdef CONFIG_MY_DEBUG
+  my_debug ("free bytes=0x%lx\n", sz);
+#endif
 
   if (next == top)                            /* merge with top */
   {

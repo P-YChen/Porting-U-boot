@@ -100,7 +100,9 @@ FIQ_STACK_START:
 	.word 0x0badc0de
 #endif
 
-
+.globl __start_code
+__start_code:
+	.word	start_code
 /*
  * the actual start code
  */

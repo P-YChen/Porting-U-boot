@@ -264,7 +264,7 @@ mmc_bwrite(int dev, unsigned long start, lbaint_t blkcnt, const void *buffer)
 
 	if (blkcnt == 0)
 		return 0;
-
+		
 	debug("mmc_bwrite: dev %d, start %lx, blkcnt %lx\n",
 		 dev, start, blkcnt);
 	/* Force to use 512-byte block,because a lot of code depends on this */

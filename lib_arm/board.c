@@ -311,6 +311,7 @@ void start_armboot (void)
 
 	/* Pointer is writable since we allocated a register for it */
 	gd = (gd_t*)(_armboot_start - CONFIG_SYS_MALLOC_LEN - sizeof(gd_t));
+	//gd = (gd_t*)(TEXT_BASE - CONFIG_SYS_MALLOC_LEN - sizeof(gd_t));
 
 	/* compiler optimization barrier needed for GCC >= 3.4 */
 	__asm__ __volatile__("": : :"memory");
@@ -331,8 +332,6 @@ void start_armboot (void)
 
 #ifdef CONFIG_MY_DEBUG
 	_init_msg *pt;
-	printf ("gd=0x%lx\r\n", (_armboot_start - CONFIG_SYS_MALLOC_LEN - sizeof(gd_t)));
-	printf ("bd=0x%lx\r\n", (_armboot_start - CONFIG_SYS_MALLOC_LEN - sizeof(gd_t)) - sizeof(bd_t));
 	printf ("monitor_flash_len = 0x%lx\r\n", _bss_start - _armboot_start);
 	printf ("Init_sequence:\r\n");		
 	for (init_fnc_ptr = init_sequence; *init_fnc_ptr; ++init_fnc_ptr) {
@@ -351,6 +350,21 @@ void start_armboot (void)
 #endif
 	mem_malloc_init (_armboot_start - CONFIG_SYS_MALLOC_LEN,
 			CONFIG_SYS_MALLOC_LEN);
+
+#ifdef CONFIG_MY_DEBUG
+	my_debug ("start=0x%lx", _start);
+	my_debug ("start_code=0x%lx", __start_code);
+	my_debug ("gd->bd=0x%lx", (char*)gd - sizeof(bd_t));
+	my_debug ("gd=0x%lx", (_armboot_start - CONFIG_SYS_MALLOC_LEN - sizeof(gd_t)));
+	my_debug ("gd_size=0x%lx", CONFIG_SYS_GBL_DATA_SIZE);
+
+	my_debug ("malloc_start=0x%lx", _armboot_start - CONFIG_SYS_MALLOC_LEN);
+
+	my_debug ("TEXT_BASE=0x%lx", TEXT_BASE);
+	my_debug ("armboot_start=0x%lx", _armboot_start);
+	my_debug ("__bss_start=0X%lx", _bss_start);
+#endif
+
 
 #ifndef CONFIG_SYS_NO_FLASH
 	/* configure available FLASH banks */
@@ -401,14 +415,14 @@ void start_armboot (void)
 #endif
 
 #if defined(CONFIG_CMD_ONENAND)
-#ifdef CONFIG_MY_CONFIG
+#ifdef CONFIG_MY_DEBUG
 	my_debug ("%s", "define CONFIG_CMD_ONENAND");
 #endif
 	onenand_init();
 #endif
 
 #ifdef CONFIG_HAS_DATAFLASH
-#ifdef CONFIG_MY_CONFIG
+#ifdef CONFIG_MY_DEBUG
 	my_debug ("%s", "define CONFIG_HAS_DATAFLASH");
 #endif
 	AT91F_DataflashInit();
@@ -424,7 +438,7 @@ void start_armboot (void)
 #endif /* CONFIG_VFD */
 
 #ifdef CONFIG_SERIAL_MULTI
-#ifdef CONFIG_MY_CONFIG
+#ifdef CONFIG_MY_DEBUG
 	my_debug ("%s", "define CONFIG_SERIAL_MULTI");
 #endif
 	serial_initialize();
@@ -438,7 +452,7 @@ void start_armboot (void)
 	jumptable_init ();
 
 #if defined(CONFIG_API)
-#ifdef CONFIG_MY_CONFIG
+#ifdef CONFIG_MY_DEBUG
 	my_debug ("%s", "define CONFIG_API");
 #endif
 	/* Initialize API */
@@ -448,7 +462,7 @@ void start_armboot (void)
 	console_init_r ();	/* fully init console as a device */
 
 #if defined(CONFIG_ARCH_MISC_INIT)
-#ifdef CONFIG_MY_CONFIG
+#ifdef CONFIG_MY_DEBUG
 	my_debug ("%s", "define CONFIG_ARCH_MISC_INIT");
 #endif
 	/* miscellaneous arch dependent initialisations */
@@ -467,7 +481,7 @@ void start_armboot (void)
 
 	/* Perform network card initialisation if necessary */
 #ifdef CONFIG_DRIVER_TI_EMAC
-#ifdef CONFIG_MY_CONFIG
+#ifdef CONFIG_MY_DEBUG
 	my_debug ("%s", "define CONFIG_DRIVER_TI_EMAC");
 #endif
 	/* XXX: this needs to be moved to board init */
@@ -493,7 +507,7 @@ extern void davinci_eth_set_mac_addr (const u_int8_t *addr);
 		load_addr = simple_strtoul (s, NULL, 16);
 	}
 #if defined(CONFIG_CMD_NET)
-#ifdef CONFIG_MY_CONFIG
+#ifdef CONFIG_MY_DEBUG
 	my_debug ("%s", "define CONFIG_CMD_NET");
 #endif
 	if ((s = getenv ("bootfile")) != NULL) {
@@ -502,14 +516,14 @@ extern void davinci_eth_set_mac_addr (const u_int8_t *addr);
 #endif
 
 #ifdef BOARD_LATE_INIT
-#ifdef CONFIG_MY_CONFIG
+#ifdef CONFIG_MY_DEBUG
 	my_debug ("%s", "define CONFIG_LATE_INIT");
 #endif
 	board_late_init ();
 #endif
 
 #ifdef CONFIG_GENERIC_MMC
-#ifdef CONFIG_MY_CONFIG
+#ifdef CONFIG_MY_DEBUG
 	my_debug ("%s", "define CONFIG_GENERIC_MMC");
 #endif
 	puts ("MMC:   ");
@@ -517,7 +531,7 @@ extern void davinci_eth_set_mac_addr (const u_int8_t *addr);
 #endif
 
 #ifdef CONFIG_BITBANGMII
-#ifdef CONFIG_MY_CONFIG
+#ifdef CONFIG_MY_DEBUG
 	my_debug ("%s", "define CONFIG_BITBANGMII");
 #endif
 	bb_miiphy_init();

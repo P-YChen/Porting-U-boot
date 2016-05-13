@@ -1,0 +1,11 @@
+__bss_end
+__bss_start
+armboot_start=0x33F80000
+TEXT_BASE=0x33F80000
+CONFIG_SYS_MALLOC_LEN=CONFIG_ENV_SIZE+1*1024*1024=0x80000+1*1024*1024
+
+CONFIG_SYS_GBL_DATA_SIZE=512
+gd
+sizeof(bd_t)
+gd->bd
+

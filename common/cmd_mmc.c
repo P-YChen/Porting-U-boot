@@ -36,7 +36,12 @@ int do_mmc (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 		cmd_usage(cmdtp);
 		return 1;
 	}
-
+#ifdef CONFIG_MY_DEBUG
+	int i;
+	my_debug ("do_mmc args:");
+	for (i=0;i<argc;i++)
+		my_debug ("argv[%d]=%s", i, argv[i]);
+#endif
 	if (strcmp(argv[1], "init") == 0) {
 		if (argc == 2) {
 			if (curr_device < 0)

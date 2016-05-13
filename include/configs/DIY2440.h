@@ -58,7 +58,7 @@
  * Size of malloc() pool
  */
 //#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 128*1024)
-#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 2*1024*1024)
+#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 1*1024*1024)
 #define CONFIG_SYS_GBL_DATA_SIZE	512 /* size in bytes reserved for initial data */
 
 /*
@@ -114,25 +114,33 @@
 #define CONFIG_YAFFS_SKIPFB
 
 #define CONFIG_CMD_MTDPARTS
-#define CONFIG_CMD_UBI
-#define CONFIG_CMD_UBIFS
+//#define CONFIG_CMD_UBI 1
+//#define CONFIG_CMD_UBIFS 1
 #define CONFIG_MTD_DEVICE
 #define CONFIG_MTD_PARTITIONS
-#define CONFIG_LZO
-#define CONFIG_RBTREE
+//#define CONFIG_LZO 1
+//#define CONFIG_RBTREE 1
 #define MTDIDS_DEFAULT "nand0=nandflash0"
 #define MTDPARTS_DEFAULT "mtdparts=nandflash0:512k(u-boot),512k(param),5m(kernel),-(file-system)"
+
+/* support SD card */
+#define CONFIG_CMD_MMC
+#define CONFIG_MMC
+#define CONFIG_MMC_S3C
+#define CONFIG_MMC_WIDE
+#define CONFIG_CMD_FAT
+#define CONFIG_DOS_PARTITION
 
 /* tag list */
 #define CONFIG_SETUP_MEMORY_TAGS
 #define CONFIG_INITRD_TAG
 #define CONFIG_CMDLINE_TAG
 
-#define CONFIG_BOOTDELAY	10
+#define CONFIG_BOOTDELAY	5	
 /*#define CONFIG_BOOTARGS	"root=ramfs devfs=mount console=ttySA0,9600" */
 /*#define CONFIG_ETHADDR	08:00:3e:26:0a:5b */
-#define CONFIG_BOOTARGS	"root=/dev/nfs nfsroot=192.168.199.154:/home/shift/work/nfs/rootfs \ 
-ip=192.168.199.110 console=ttySA0,115200"
+//#define CONFIG_BOOTARGS	"root=/dev/nfs nfsroot=192.168.199.154:/home/shift/work/nfs/rootfs \ 
+#define CONFIG_BOOTARGS	"noinitrd root=/dev/mtdblock3 init=/linuxrc console=ttySAC0,115200" 
 #define CONFIG_ETHADDR	08:90:00:A0:90:90 
 #define CONFIG_NETMASK          255.255.255.0
 #define CONFIG_IPADDR		192.168.199.110
@@ -140,7 +148,7 @@ ip=192.168.199.110 console=ttySA0,115200"
 #define CONFIG_GATEWAYIP	192.168.199.1
 //#define CONFIG_DM9000_DEBUG 1
 #define CONFIG_BOOTFILE	"uImage"
-#define CONFIG_BOOTCOMMAND	"tftp; bootm"
+#define CONFIG_BOOTCOMMAND	"mmc init; sleep 5;fatload mmc 0:1 30008000 uImage; bootm"
 /*#define CONFIG_BOOTFILE	"elinos-lart" */
 /*#define CONFIG_BOOTCOMMAND	"tftp; bootm" */
 
@@ -240,7 +248,7 @@ ip=192.168.199.110 console=ttySA0,115200"
 #define CONFIG_SYS_NAND_BASE	0x4E000000
 #define CONFIG_SYS_MAX_NAND_DEVICE	1
 #define CONFIG_SYS_64BIT_VSPRINTF
-//#define CONFIG_MTD_NAND_BERIFY_WRITE
+#define CONFIG_MTD_NAND_BERIFY_WRITE
 //#define CONFIG_NAND_HWECC
 #endif
 #define CONFIG_UBOOT_SIZE	0x80000
