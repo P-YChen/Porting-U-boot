@@ -1,8 +1,8 @@
 /*
  *  armboot - Startup Code for ARM920 CPU-core
  *
- *  Copyright (c) 2001	Marius Gröger <mag@sysgo.de>
- *  Copyright (c) 2002	Alex Züpke <azu@sysgo.de>
+ *  Copyright (c) 2001	Marius Grï¿½ger <mag@sysgo.de>
+ *  Copyright (c) 2002	Alex Zï¿½pke <azu@sysgo.de>
  *  Copyright (c) 2002	Gary Jennejohn <garyj@denx.de>
  *
  * See file CREDITS for list of people who contributed to this
@@ -166,7 +166,7 @@ cpu_init_crit:
 	 * because memory timing is board-dependend, you will
 	 * find a lowlevel_init.S in your board directory.
 	 */
-	mov	ip, lr
+/*	mov	ip, lr */
 
 	bl	lowlevel_init
 
@@ -221,9 +221,47 @@ clbss_l:str	r2, [r0]		/* clear loop...                    */
 	cmp	r0, r1
 	ble	clbss_l
 
+#ifdef CONFIG_ENABLE_MMU
+enable_mmu:
+	/* enable domain access */
+	ldr	r5, =0x0000ffff
+	mcr	p15, 0, r5, c3, c0, 0		@ load domain access register
+
+	/* Set the TTB register */
+	ldr	r0, _mmu_table_base
+	mcr	p15, 0, r0, c2, c0, 0
+
+    /* mapping addr: 0 -> TEXT_BASE */	
+	ldr r1, [r0]
+	ldr r2, =0xfff00000
+	bic r1, r1, r2
+
+	ldr r3, _TEXT_BASE
+	ldr r2, =0xfffff
+	bic r3, r3, r2
+
+	orr r1, r1, r3
+	str r1, [r0]
+
+	/* Enable the MMU */
+mmu_on:
+	mrc	p15, 0, r0, c1, c0, 0
+	orr	r0, r0, #1			/* Set CR_M to enable MMU */
+	mcr	p15, 0, r0, c1, c0, 0
+	nop
+	nop
+	nop
+	nop
+#endif
+
 	ldr	pc, _start_armboot
 
 _start_armboot:	.word start_armboot
+
+#ifdef CONFIG_ENABLE_MMU
+_mmu_table_base:
+	.word mmu_table
+#endif
 
 /*
  *************************************************************************

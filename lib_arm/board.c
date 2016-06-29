@@ -479,6 +479,10 @@ void start_armboot (void)
 	/* enable exceptions */
 	enable_interrupts ();
 
+#ifdef CONFIG_USB_DEVICE
+	usb_init_slave();
+#endif
+
 	/* Perform network card initialisation if necessary */
 #ifdef CONFIG_DRIVER_TI_EMAC
 #ifdef CONFIG_MY_DEBUG
@@ -548,6 +552,13 @@ extern void davinci_eth_set_mac_addr (const u_int8_t *addr);
 #endif
 	/* main_loop() can return to retry autoboot, if so just run it again. */
 	for (;;) {
+		int ret, a, b, c, d;
+		a=5;
+		b=3;
+		c = b/a;
+		d = b%a;
+		printf ("%d / %d = %d\r\n", b, a, c);
+		printf ("%d %% %d = %d \r\n", b, a, d);
 		main_loop ();
 	}
 

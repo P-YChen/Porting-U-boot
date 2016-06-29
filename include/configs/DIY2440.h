@@ -51,8 +51,16 @@
 #define CONFIG_SYS_CLK_FREQ	12000000/* the SMDK2410 has 12MHz input clock */
 
 
-#define USE_920T_MMU		1
-#undef CONFIG_USE_IRQ			/* we don't need IRQ/FIQ stuff */
+//#define USE_920T_MMU		1
+//#undef CONFIG_USE_IRQ			/* we don't need IRQ/FIQ stuff */
+#define CONFIG_ENABLE_MMU
+#define CONFIG_USE_IRQ
+#define CONFIG_USB_DEVICE
+#define CONFIG_CMD_DNW
+
+#define CONFIG_USB_OHCI
+#define CONFIG_USB_STORAGE
+#define CONFIG_CMD_USB
 
 /*
  * Size of malloc() pool
