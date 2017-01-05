@@ -32,7 +32,7 @@
 DECLARE_GLOBAL_DATA_PTR;
 
 const char *weekdays[] = {
-	"Sun", "Mon", "Tues", "Wednes", "Thurs", "Fri", "Satur",
+	"Mon", "Tues", "Wednes", "Thurs", "Fri", "Satur", "Sun"
 };
 
 #ifdef CONFIG_RELOC_FIXUP_WORKS
@@ -87,8 +87,8 @@ int do_date (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 
 		printf ("Date: %4d-%02d-%02d (%sday)    Time: %2d:%02d:%02d\n",
 			tm.tm_year, tm.tm_mon, tm.tm_mday,
-			(tm.tm_wday<0 || tm.tm_wday>6) ?
-				"unknown " : RELOC(weekdays[tm.tm_wday]),
+			(tm.tm_wday<1 || tm.tm_wday>7) ?
+				"unknown " : RELOC(weekdays[tm.tm_wday-1]),
 			tm.tm_hour, tm.tm_min, tm.tm_sec);
 
 		break;

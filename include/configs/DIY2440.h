@@ -62,6 +62,7 @@
 #define CONFIG_USB_STORAGE
 #define CONFIG_CMD_USB
 
+#define CONFIG_CMD_DATE
 /*
  * Size of malloc() pool
  */
